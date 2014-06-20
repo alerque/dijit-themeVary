@@ -1,5 +1,5 @@
 {
-	"svnThemeUrl"		: "http://svn.dojotoolkit.org/src/dijit/trunk/themes/claro",
+	"gitDijitRepo"		: "git@github.com:dojo/dijit.git"
 	"inputThemeName" 	: "claro",
 	"outputThemeName" 	: "noir"
 }

@@ -23,7 +23,7 @@ class CssTransformApp
 {
 	public $inDir = "";
 	public $outDir = "";
-	public $svnThemeUrl = "";
+	public $gitDijitRepo = "";
 	public $inputThemeName = "";
 	public $outputThemeName = "";
 	public $dryRun = true;
@@ -93,25 +93,25 @@ class CssTransformApp
 	}
 	
 	function fetchTheme() {
-		// svn url case
-		if(!empty($this->svnThemeUrl)) {
-			return $this->_fetchSvnTheme($this->svnThemeUrl);
+		// git url case
+		if(!empty($this->gitDijitRepo)) {
+			return $this->_fetchDijitRepo($this->gitDijitRepo);
 		}
-		// TODO: handle other cases? git/whatever..
 	}
 	
-	function _fetchSvnTheme($repo) {
+	function _fetchDijitRepo($repo) {
 		if(!$repo) {
 			throw new Exception("Bad repo url: " . $repo);
 		}
 		$destination = $this->outDir;
-		$checkout = "svn export --force " . $this->svnThemeUrl . " " . $this->outDir;
+		$checkout = "git clone " . $this->gitDijitRepo . " " . $this->outDir;
+		$checkout = "mkdcd " . $this->outDir . "; git init ; git remote add -f origin " . $this->gitDijitRepo ."; git config core.sparsecheckout true; echo 'themes/" . $this->inputThemeName . "' >> .git/info/sparse-checkout; git pull origin master";
 		if($this->dryRun) {
 			$this->log("(dry run, doesn't actually do anything)");
 			$checkout = "echo $checkout";
 		}
 
-		$this->log("Fetching theme from svn: $repo");
+		$this->log("Fetching theme from git: $repo");
 
 		if (substr(php_uname(), 0, 7) == "Windows") {
 			pclose(popen("start /B ". $checkout, "r"));
@@ -120,7 +120,7 @@ class CssTransformApp
 			$result = exec($checkout); //  . " > /dev/null &"
 			$this->log("Result: " . $result);
 		}
-		$this->log("/Fetched theme from svn");
+		$this->log("/Fetched theme from git");
 		return 1;
 	}
 	
